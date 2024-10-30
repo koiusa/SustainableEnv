@@ -1,0 +1,10 @@
+services:
+  jenkins:
+    restart: always
+    build: . 
+    ports:
+      - 8088:8080
+      - 43000:43000
+    volumes:
+      - ./jenkins:/usr/local/jenkins
+      - /var/run/docker.sock:/var/run/docker.sock

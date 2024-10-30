@@ -1,0 +1,37 @@
+services:
+  gitbucket:
+    container_name: gitbucket
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - GITBUCKET_DESIRED_VERSION=4.41.0
+    ports:
+      - 8083:8080   # HTTP
+      - 8444:8443   # HTTPS (Optionnal)
+      - 29419:29418 # SSH  (Optionnal, disabled by default)
+    environment:
+      # This environment variable should only be uncommented if you intend to use an external database and/or a different data folder.
+      GITBUCKET_HOME: "/gitbucket/gitbucket_data"
+      #DATABASE_URL: "jdbc:h2:/gitbucket/gitbucket_data/data;MVCC=true"
+      # You can change the values of these two environment variables if want more RAM for the JVM and need to support more than a couple concurent users.
+      JVM_RAM_MIN: "128m"
+      JVM_RAM_MAX: "256m"
+    volumes:
+      - ./data:/gitbucket/gitbucket_data
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  postgres:
+    container_name: gitbucket-db
+    image: postgres
+    restart: always
+    ports:
+      - 5433:5433
+    environment:
+      POSTGRES_DB: gitbucket
+      POSTGRES_USER: sa
+      POSTGRES_PASSWORD: sa
+    volumes:
+      - ./db:/var/lib/postgresql/data

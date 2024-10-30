@@ -1,0 +1,17 @@
+services:
+  universalmediaserver:
+    image: universalmediaserver/ums:latest
+    container_name: ums
+    network_mode: host
+    ports:
+      - 1044:1044
+      - 5001:5001
+      - 9001:9001
+    environment:
+      - UMS_PROFILE=/profile
+      - JAVA_TOOL_OPTIONS=-XX:+IgnoreUnrecognizedVMOptions
+    volumes:
+      - "./profile:/profile"
+      - "${MEDIADIR}:/media:ro"
+    restart: always
+

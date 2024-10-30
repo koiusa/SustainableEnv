@@ -1,0 +1,35 @@
+#FROM --platform=$TARGETPLATFORM amd64/eclipse-temurin:19-focal
+FROM --platform=$TARGETPLATFORM eclipse-temurin:latest
+ARG TARGETPLATFORM
+
+EXPOSE 8080
+
+RUN apt-get update; apt-get --yes install \
+    apt-transport-https \
+    curl \
+    git \
+    ca-certificates \
+    gnupg-agent \
+    openjdk-17-jdk \
+    software-properties-common && \
+    mkdir -p /etc/apt/keyrings && \ 
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
+    echo \
+        "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+        $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+    apt-get update && \
+    apt-get --yes install \
+    docker-ce docker-ce-cli containerd.io docker-compose-plugin && \
+    apt-get --yes upgrade && \
+    apt-get clean && apt-get autoremove -q && \
+    rm -rf /var/lib/apt/lists/* /usr/share/doc /usr/share/man /tmp/*
+
+ENV JENKINS_HOME /usr/local/jenkins
+
+RUN mkdir -p /usr/local/jenkins
+RUN useradd --no-create-home --shell /bin/sh jenkins 
+RUN chown -R jenkins:jenkins /usr/local/jenkins/
+ADD http://mirrors.jenkins-ci.org/war-stable/latest/jenkins.war /usr/local/jenkins.war
+RUN chmod 644 /usr/local/jenkins.war
+
+CMD ["/usr/bin/java", "-jar", "/usr/local/jenkins.war"]
