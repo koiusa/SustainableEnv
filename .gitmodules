@@ -1,0 +1,3 @@
+[submodule "docker/jenkins/agent"]
+	path = docker/jenkins/agent
+	url = https://github.com/koiusa/jenkinsAgent.git
