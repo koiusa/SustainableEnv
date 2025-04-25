@@ -10,7 +10,7 @@ RUN apt-get update; apt-get --yes install \
     git \
     ca-certificates \
     gnupg-agent \
-    openjdk-17-jdk \
+    openjdk-21-jdk \
     software-properties-common && \
     mkdir -p /etc/apt/keyrings && \ 
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
